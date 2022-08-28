@@ -1,6 +1,7 @@
 """Functions for api calls to poke-api """
 import json
 import requests as re
+from time import sleep
 
 
 def parse_sprites(sprites):
@@ -25,9 +26,12 @@ def get_generations():
   """Gets the generations from pokemon
   Returns: list: the generations
   """
-  generations_api = re.get("https://pokeapi.co/api/v2/generation/")
-  if generations_api.status_code == 200:
-    return json.loads(generations_api.text)
+  while True:
+    generations_api = re.get("https://pokeapi.co/api/v2/generation/")
+    if generations_api.status_code == 200:
+      return json.loads(generations_api.text)
+    print("failed, sleping")
+    sleep(1)
 
 
 def get_pokemon(generation):
@@ -35,21 +39,40 @@ def get_pokemon(generation):
   Args: generation (number): the generation
   Returns: list: pokemon from the generation
   """
-  generation_api = re.get(generation['url'])
-  if generation_api.status_code == 200:
-    return json.loads(generation_api.text)['pokemon_species']
+  while True:
+    generation_api = re.get(generation['url'])
+    if generation_api.status_code == 200:
+      return json.loads(generation_api.text)['pokemon_species']
+    print("failed, sleping")
+    sleep(1)
 
 
-def get_sprites(name):
+def get_sprites(name, url):
   """gets the sprites
   Args: name (string): the name of the pokemon
   Returns: number,list: pokedex number, sprites
   """
-  pokemon_api = re.get("https://pokeapi.co/api/v2/pokemon/" + name)
-  if pokemon_api.status_code == 200:
-    # parse individual pokemon data
-    poke = json.loads(pokemon_api.text)
-    sprites = poke['sprites']
-    poke_num = poke['id']
-    valid = parse_sprites(sprites)
-    return poke_num, valid
+  while True:
+    pokemon_api = re.get("https://pokeapi.co/api/v2/pokemon/" + name)
+    if pokemon_api.status_code == 200:
+      # parse individual pokemon data
+      poke = json.loads(pokemon_api.text)
+      sprites = poke['sprites']
+      poke_num = poke['id']
+      valid = parse_sprites(sprites)
+      return poke_num, valid
+    elif pokemon_api.status_code == 404:
+      pokemon_api = re.get(url)
+      if pokemon_api.status_code == 200:
+        poke = json.loads(pokemon_api.text)
+        poke_num = poke['id']
+        pokemon_api = re.get(
+            "https://pokeapi.co/api/v2/pokemon/" + str(poke_num))
+        if pokemon_api.status_code == 200:
+          poke = json.loads(pokemon_api.text)
+          sprites = poke['sprites']
+          poke_num = poke['id']
+          valid = parse_sprites(sprites)
+          return poke_num, valid
+    print("failed, sleping")
+    sleep(1)

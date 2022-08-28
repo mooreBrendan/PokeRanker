@@ -29,7 +29,7 @@ class DB:
     Args: name (text): pokemon name
     Returns: boolean: true if already in database
     """
-    self.cur.execute("SELECT rowid FROM rankings WHERE name = ?", (name,))
+    self.cur.execute("SELECT rowid FROM ratings WHERE name = ?", (name,))
     data = self.cur.fetchall()
     return len(data) != 0
 
@@ -43,7 +43,8 @@ class DB:
         sprites (text): comma seperated list of urls
     """
     self.cur.execute(
-        f"insert into rankings(num,name,gen,sprites) values = ({num},{name},{gen},{sprites})")
+        f"insert into ratings(num,name,gen,sprites) values ({num},'{name}',{gen},'{sprites}')")
+    self.conn.commit()
 
   def get_ratings(self, gen):
     """gets the ratings for the given generation
@@ -68,3 +69,14 @@ class DB:
     res = self.cur.execute(
         f"select name, sprites from ratings where id = {num}")
     return res.fetchall()
+
+  def set_rating(self, pokemon, rating):
+    """sets the rating for the given pokemon
+
+    Args:
+        pokemon (text): the name of the pokemon
+        rating (number): the rating
+    """
+    self.cur.execute(
+        f"update ratings set rating = {rating} where name='{pokemon}'")
+    self.conn.commit()
