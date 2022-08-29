@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>CSS Template</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+
+		html,
+		body {
+			height: 100%;
+		}
+
+		body {
+			font-family: Arial, Helvetica, sans-serif;
+			border: 2px solid red;
+			display: flex;
+			flex-direction: column;
+			margin: 0px;
+		}
+
+		pokemon {
+			flex: 1;
+			height: 100%;
+		}
+
+		/* Style the header */
+		header {
+			background-color: #666;
+			padding: 0px 30px;
+			text-align: center;
+			font-size: 35px;
+			color: white;
+		}
+
+		/* Container for flexboxes */
+		section {
+			display: -webkit-flex;
+			display: flex;
+			height: 100%;
+		}
+
+		/* Style the navigation menu */
+		nav {
+			-webkit-flex: 1;
+			-ms-flex: 1;
+			flex: 1;
+			background: #ccc;
+			padding: 20px;
+		}
+
+		/* Style the list inside the menu */
+		nav ul {
+			list-style-type: none;
+			padding: 0;
+		}
+
+		/* Style the content */
+		article {
+			-webkit-flex: 3;
+			-ms-flex: 3;
+			flex: 3;
+			background-color: #f1f1f1;
+			padding: 10px;
+		}
+
+		.image,
+		img {
+			width: 50%;
+		}
+
+		/* Responsive layout - makes the menu and the content (inside the section) sit on top of each other instead of next to each other */
+		@media (max-width: 800px) {
+			section {
+				-webkit-flex-direction: column;
+				flex-direction: column;
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<header>
+		<h2>Cities</h2>
+	</header>
+	<pokemon>
+		<section>
+			<nav>
+				<ol>
+					<li>AVG: xx%, REM: yyy</li>
+					<li>AVG: xx%, REM: yyy</li>
+					<li>AVG: xx%, REM: yyy</li>
+					<li>AVG: xx%, REM: yyy</li>
+					<li>AVG: xx%, REM: yyy</li>
+					<li>AVG: xx%, REM: yyy</li>
+					<li>AVG: xx%, REM: yyy</li>
+					<li>AVG: xx%, REM: yyy</li>
+				</ol>
+			</nav>
+
+			<article>
+				<center>
+					<h1>Ditto</h1>
+					<div class="image">
+						<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png">
+					</div><br>
+					<button>left</button><button>right</button><br><button>shuffle</button><button>undo</button>
+				</center>
+			</article>
+		</section>
+	</pokemon>
+
+</body>
+
+</html>
