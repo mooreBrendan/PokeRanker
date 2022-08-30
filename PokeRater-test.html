@@ -5,6 +5,10 @@
 	<title>CSS Template</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://kit.fontawesome.com/c4d1cd3624.js" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+	<!-- <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet" -->
+	<!-- type='text/css'> -->
 	<style>
 		* {
 			box-sizing: border-box;
@@ -17,7 +21,6 @@
 
 		body {
 			font-family: Arial, Helvetica, sans-serif;
-			border: 2px solid red;
 			display: flex;
 			flex-direction: column;
 			margin: 0px;
@@ -73,6 +76,86 @@
 			width: 50%;
 		}
 
+
+		/* #half-stars-example { */
+
+		/* use display:inline-flex to prevent whitespace issues. alternatively, you can put all the children of .rating-group on a single line */
+		.rating-group {
+			display: inline-flex;
+		}
+
+		/* make hover effect work properly in IE */
+		.rating__icon {
+			pointer-events: none;
+		}
+
+		/* hide radio inputs */
+		.rating__input {
+			position: absolute !important;
+			left: -9999px !important;
+		}
+
+		/* set icon padding and size */
+		.rating__label {
+			cursor: pointer;
+			/* if you change the left/right padding, update the margin-right property of .rating__label--half as well. */
+			padding: 0 0.1em;
+			font-size: 2rem;
+		}
+
+		/* add padding and positioning to half star labels */
+		.rating__label--half {
+			padding-right: 0;
+			margin-right: -0.6em;
+			z-index: 2;
+		}
+
+		/* set default star color */
+		.rating__icon--star {
+			color: orange;
+		}
+
+		/* set color of none icon when unchecked */
+		.rating__icon--none {
+			color: #eee;
+		}
+
+		/* if none icon is checked, make it red */
+		.rating__input--none:checked+.rating__label .rating__icon--none {
+			color: red;
+		}
+
+		/* if any input is checked, make its following siblings grey */
+		.rating__input:checked~.rating__label .rating__icon--star {
+			color: #ddd;
+		}
+
+		/* make all stars orange on rating group hover */
+		.rating-group:hover .rating__label .rating__icon--star,
+		.rating-group:hover .rating__label--half .rating__icon--star {
+			color: orange;
+		}
+
+		/* make hovered input's following siblings grey on hover */
+		.rating__input:hover~.rating__label .rating__icon--star,
+		.rating__input:hover~.rating__label--half .rating__icon--star {
+			color: #ddd;
+		}
+
+		/* make none icon grey on rating group hover */
+		.rating-group:hover .rating__input--none:not(:hover)+.rating__label .rating__icon--none {
+			color: #eee;
+		}
+
+		/* make none icon red on hover */
+		.rating__input--none:hover+.rating__label .rating__icon--none {
+			color: red;
+		}
+
+		/* } */
+
+
+
 		/* Responsive layout - makes the menu and the content (inside the section) sit on top of each other instead of next to each other */
 		@media (max-width: 800px) {
 			section {
@@ -86,7 +169,7 @@
 <body>
 
 	<header>
-		<h2>Cities</h2>
+		<h2>PokeRater</h2>
 	</header>
 	<pokemon>
 		<section>
@@ -109,7 +192,51 @@
 					<div class="image">
 						<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png">
 					</div><br>
-					<button>left</button><button>right</button><br><button>shuffle</button><button>undo</button>
+					<button> <i class="fa-solid fa-arrow-left fa-3x" aria-hidden="true"></i></button>
+					<button><i class="fa-solid fa-arrow-right fa-3x" aria-hidden="true"></i></button><br>
+					<button><i class="fa-solid fa-shuffle fa-2x"></i></button>
+					<button><i class="fa-solid fa-angles-left fa-2x"></i></button><br><br>
+					<div id="half-stars-example">
+						<div class="rating-group">
+							<input class="rating__input rating__input--none" checked name="rating2" id="rating2-0" value="0"
+								type="radio">
+							<label aria-label="0 stars" class="rating__label" for="rating2-0">&nbsp;</label>
+							<label aria-label="0.5 stars" class="rating__label rating__label--half" for="rating2-05"><i
+									class="rating__icon rating__icon--star fa fa-star-half"></i></label>
+							<input class="rating__input" name="rating2" id="rating2-05" value="0.5" type="radio">
+							<label aria-label="1 star" class="rating__label" for="rating2-10"><i
+									class="rating__icon rating__icon--star fa fa-star"></i></label>
+							<input class="rating__input" name="rating2" id="rating2-10" value="1" type="radio">
+							<label aria-label="1.5 stars" class="rating__label rating__label--half" for="rating2-15"><i
+									class="rating__icon rating__icon--star fa fa-star-half"></i></label>
+							<input class="rating__input" name="rating2" id="rating2-15" value="1.5" type="radio">
+							<label aria-label="2 stars" class="rating__label" for="rating2-20"><i
+									class="rating__icon rating__icon--star fa fa-star"></i></label>
+							<input class="rating__input" name="rating2" id="rating2-20" value="2" type="radio">
+							<label aria-label="2.5 stars" class="rating__label rating__label--half" for="rating2-25"><i
+									class="rating__icon rating__icon--star fa fa-star-half"></i></label>
+							<input class="rating__input" name="rating2" id="rating2-25" value="2.5" type="radio" checked>
+							<label aria-label="3 stars" class="rating__label" for="rating2-30"><i
+									class="rating__icon rating__icon--star fa fa-star"></i></label>
+							<input class="rating__input" name="rating2" id="rating2-30" value="3" type="radio">
+							<label aria-label="3.5 stars" class="rating__label rating__label--half" for="rating2-35"><i
+									class="rating__icon rating__icon--star fa fa-star-half"></i></label>
+							<input class="rating__input" name="rating2" id="rating2-35" value="3.5" type="radio">
+							<label aria-label="4 stars" class="rating__label" for="rating2-40"><i
+									class="rating__icon rating__icon--star fa fa-star"></i></label>
+							<input class="rating__input" name="rating2" id="rating2-40" value="4" type="radio">
+							<label aria-label="4.5 stars" class="rating__label rating__label--half" for="rating2-45"><i
+									class="rating__icon rating__icon--star fa fa-star-half"></i></label>
+							<input class="rating__input" name="rating2" id="rating2-45" value="4.5" type="radio">
+							<label aria-label="5 stars" class="rating__label" for="rating2-50"><i
+									class="rating__icon rating__icon--star fa fa-star"></i></label>
+							<input class="rating__input" name="rating2" id="rating2-50" value="5" type="radio">
+						</div>
+					</div>
+					<br>
+					<button>confirm</button>
+
+					</div>
 				</center>
 			</article>
 		</section>
