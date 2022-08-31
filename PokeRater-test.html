@@ -76,6 +76,38 @@
 			width: 50%;
 		}
 
+		.pk-click {
+			border: none;
+			background: none;
+		}
+
+		.pk-click:hover>.fa-solid:hover {
+			color: grey;
+		}
+
+		#shChk {
+			display: none;
+		}
+
+		:checked+label>.fa-shuffle {
+			color: rgb(15, 189, 15);
+		}
+
+		:checked+label>.fa-shuffle:hover {
+			color: rgb(174, 249, 174);
+		}
+
+		.fa-shuffle:hover {
+			color: rgb(174, 249, 174);
+		}
+
+		.avg {
+			display: inline;
+		}
+
+		.rem {
+			display: inline;
+		}
 
 		/* #half-stars-example { */
 
@@ -167,7 +199,9 @@
 </head>
 
 <body>
-
+	<!-- fixes firefox bug -->
+	<script>0</script>
+	<!--  -->
 	<header>
 		<h2>PokeRater</h2>
 	</header>
@@ -175,14 +209,22 @@
 		<section>
 			<nav>
 				<ol>
-					<li>AVG: xx%, REM: yyy</li>
-					<li>AVG: xx%, REM: yyy</li>
-					<li>AVG: xx%, REM: yyy</li>
-					<li>AVG: xx%, REM: yyy</li>
-					<li>AVG: xx%, REM: yyy</li>
-					<li>AVG: xx%, REM: yyy</li>
-					<li>AVG: xx%, REM: yyy</li>
-					<li>AVG: xx%, REM: yyy</li>
+					<li #id="gen1">AVG: <p class="avg">xx</p>%, REM: <p class="rem">yyy</p>
+					</li>
+					<li #id="gen2">AVG: <p class="avg">xx</p>%, REM: <p class="rem">yyy</p>
+					</li>
+					<li #id="gen3">AVG: <p class="avg">xx</p>%, REM: <p class="rem">yyy</p>
+					</li>
+					<li #id="gen4">AVG: <p class="avg">xx</p>%, REM: <p class="rem">yyy</p>
+					</li>
+					<li #id="gen5">AVG: <p class="avg">xx</p>%, REM: <p class="rem">yyy</p>
+					</li>
+					<li #id="gen6">AVG: <p class="avg">xx</p>%, REM: <p class="rem">yyy</p>
+					</li>
+					<li #id="gen7">AVG: <p class="avg">xx</p>%, REM: <p class="rem">yyy</p>
+					</li>
+					<li #id="gen8">AVG: <p class="avg">xx</p>%, REM: <p class="rem">yyy</p>
+					</li>
 				</ol>
 			</nav>
 
@@ -190,12 +232,20 @@
 				<center>
 					<h1>Ditto</h1>
 					<div class="image">
-						<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png">
+						<img id="sprites" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png">
 					</div><br>
-					<button> <i class="fa-solid fa-arrow-left fa-3x" aria-hidden="true"></i></button>
-					<button><i class="fa-solid fa-arrow-right fa-3x" aria-hidden="true"></i></button><br>
-					<button><i class="fa-solid fa-shuffle fa-2x"></i></button>
-					<button><i class="fa-solid fa-angles-left fa-2x"></i></button><br><br>
+					<button class="pk-click" onclick="setSource(-1)"> <i class="fa-solid fa-arrow-left fa-3x"
+							aria-hidden="true"></i></button>
+					<button class="pk-click" onclick="setSource(1)"><i class="fa-solid fa-arrow-right fa-3x"
+							aria-hidden="true"></i></button><br>
+
+					<input class="shuffle" checked name="shuffle-check" id="shChk" value="checked" type="checkbox">
+					<label for="shChk"><i class="fa-solid fa-shuffle fa-2x"></i></label>
+
+					<button class="pk-click" onclick="prevPokemon()"><i
+							class="fa-solid fa-angles-left fa-2x"></i></button><br><br>
+
+					<!-- STARS -->
 					<div id="half-stars-example">
 						<div class="rating-group">
 							<input class="rating__input rating__input--none" checked name="rating2" id="rating2-0" value="0"
@@ -234,7 +284,7 @@
 						</div>
 					</div>
 					<br>
-					<button>confirm</button>
+					<button onclick="submit()">confirm</button>
 
 					</div>
 				</center>
@@ -243,5 +293,61 @@
 	</pokemon>
 
 </body>
+<script>
+	//DEBUG: make 0 when done
+	id = 71;
+	prevID = null;
+	currIMG = 0;
+	//DEBUG: make empty when done
+	imageLinks = ["https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png", "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png", "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/134.png"]
+
+	//actual mod since js only uses remainder
+	Number.prototype.mod = function (n) {
+		"use strict";
+		return ((this % n) + n) % n;
+	};
+
+	//sets the index for the current sprite
+	function setSource(shift) {
+		currIMG = (currIMG + shift).mod(imageLinks.length);
+		setSprite();
+	}
+
+	//sets the given link to display
+	function setSprite() {
+		document.getElementById("sprites").src = imageLinks[currIMG];
+	}
+
+	//sets the information for the generation on the page
+	function setGen(gen, avg, rem) {
+		document.getElementsByClassName("avg")[Number(gen) - 1].innerHTML = String(avg);
+		document.getElementsByClassName("rem")[Number(gen) - 1].innerHTML = String(rem);
+	}
+
+	//goes back to the previous pokemon (in case accidentally hit wrong value)
+	function prevPokemon() {
+		//get prevID
+	}
+
+	// submits the form value
+	function submit() {
+		shuffle = document.getElementById("shChk").checked;
+		rating = getRating()
+		if (rating <= 0 || rating > 5) {
+			alert("Please enter a rating!")
+		}
+		//post data
+	}
+
+	//gets the rating value
+	function getRating() {
+		radio = document.getElementsByName("rating2")
+		for (i = 0; i < radio.length; i++) {
+			if (radio[i].checked) {
+				return radio[i].value;
+			}
+		}
+	}
+</script>
 
 </html>
