@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-	<title>CSS Template</title>
+	<title>PokeRater</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="https://kit.fontawesome.com/c4d1cd3624.js" crossorigin="anonymous"></script>
@@ -198,7 +198,7 @@
 	</style>
 </head>
 
-<body>
+<body onload="getPokemon()">
 	<!-- fixes firefox bug -->
 	<script>0</script>
 	<!--  -->
@@ -332,11 +332,20 @@
 	// submits the form value
 	function submit() {
 		shuffle = document.getElementById("shChk").checked;
-		rating = getRating()
+		rating = getRating();
 		if (rating <= 0 || rating > 5) {
 			alert("Please enter a rating!")
+			return;
 		}
 		//post data
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST", "/", true);
+		xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.send(JSON.stringify({
+			"shuffle": shuffle,
+			"rating": rating
+		}));
+		getPokemon();
 	}
 
 	//gets the rating value
@@ -347,6 +356,32 @@
 				return radio[i].value;
 			}
 		}
+	}
+
+	function getPokemon() {
+		var xhr = new XMLHttpRequest();
+		// we defined the xhr
+
+		xhr.onreadystatechange = function () {
+			if (this.readyState != 4) return;
+
+			if (this.status == 200) {
+				var data = this.responseText;
+
+				// we get the returned data
+				parsePokemon(data);
+			}
+
+			// end of state change: it can be after some time (async)
+		};
+
+		xhr.open('GET', "/pokemon", true);
+		xhr.send();
+	}
+
+
+	function parsePokemon(pokemon) {
+		console.log(pokemon)
 	}
 </script>
 
