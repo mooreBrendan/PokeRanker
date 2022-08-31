@@ -81,7 +81,7 @@
 			background: none;
 		}
 
-		.pk-click:hover>.fa-solid:hover {
+		.pk-click:not(.grayout)>.fa-solid:hover {
 			color: grey;
 		}
 
@@ -97,6 +97,7 @@
 			color: rgb(174, 249, 174);
 		}
 
+		/* unchecked */
 		.fa-shuffle:hover {
 			color: rgb(174, 249, 174);
 		}
@@ -108,6 +109,18 @@
 		.rem {
 			display: inline;
 		}
+
+		.grayout {
+			opacity: 0.4;
+			/* Real browsers */
+			filter: alpha(opacity=60);
+			/* MSIE */
+		}
+
+		/* .grayout:hover {
+			color: black;
+		} */
+
 
 		/* #half-stars-example { */
 
@@ -242,7 +255,7 @@
 					<input class="shuffle" checked name="shuffle-check" id="shChk" value="checked" type="checkbox">
 					<label for="shChk"><i class="fa-solid fa-shuffle fa-2x"></i></label>
 
-					<button class="pk-click" onclick="prevPokemon()"><i
+					<button class="pk-click" id="undo" onclick="prevPokemon()"><i
 							class="fa-solid fa-angles-left fa-2x"></i></button><br><br>
 
 					<!-- STARS -->
@@ -295,7 +308,7 @@
 </body>
 <script>
 	//DEBUG: make 0 when done
-	id = 71;
+	currID = null;
 	prevID = null;
 	currIMG = 0;
 	//DEBUG: make empty when done
@@ -326,6 +339,11 @@
 
 	//goes back to the previous pokemon (in case accidentally hit wrong value)
 	function prevPokemon() {
+		//check if there is a previous pokemon
+		if (document.getElementById("undo").classList.contains("grayout")) {
+			return
+		}
+
 		//get prevID
 	}
 
@@ -369,6 +387,7 @@
 				var data = this.responseText;
 
 				// we get the returned data
+				prevID = currID;
 				parsePokemon(data);
 			}
 
@@ -381,6 +400,12 @@
 
 
 	function parsePokemon(pokemon) {
+		if (prevID == null) {
+			document.getElementById("undo").classList.add("grayout");
+		} else {
+			document.getElementById("undo").classList.remove("grayout");
+		}
+		currID = 71;
 		console.log(pokemon)
 	}
 </script>
