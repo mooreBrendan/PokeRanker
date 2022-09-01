@@ -211,7 +211,7 @@
 	</style>
 </head>
 
-<body onload="getPokemon()">
+<body onload="setup()">
 	<!-- fixes firefox bug -->
 	<script>0</script>
 	<!--  -->
@@ -314,6 +314,13 @@
 	//DEBUG: make empty when done
 	imageLinks = ["https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png", "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png", "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/134.png"]
 
+	function setup() {
+		document.getElementById("shChk").checked = false;
+		document.getElementById("rating2-0").checked = true
+		updateGrayOut();
+		getPokemon(0);
+	}
+
 	//actual mod since js only uses remainder
 	Number.prototype.mod = function (n) {
 		"use strict";
@@ -345,6 +352,12 @@
 		}
 
 		//get prevID
+		fetch("/pokemon/" + prevID + "?shuffle=" + String(shuffle)).then((data) => {
+			currID = prevID;
+			prevID = null;
+			parsePokemon(data);
+			updateGrayOut();
+		})
 	}
 
 	// submits the form value
@@ -355,15 +368,20 @@
 			alert("Please enter a rating!")
 			return;
 		}
-		//post data
-		var xhr = new XMLHttpRequest();
-		xhr.open("POST", "/", true);
-		xhr.setRequestHeader('Content-Type', 'application/json');
-		xhr.send(JSON.stringify({
+
+		data = {
+			"name": currID,
 			"shuffle": shuffle,
 			"rating": rating
-		}));
+		}
+
+		fetch("/", {
+			method: "POST",
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(data)
+		})
 		getPokemon();
+		console.log("ending submit")
 	}
 
 	//gets the rating value
@@ -377,36 +395,41 @@
 	}
 
 	function getPokemon() {
-		var xhr = new XMLHttpRequest();
-		// we defined the xhr
+		shuffle = document.getElementById("shChk").checked;
+		console.log("get random");
 
-		xhr.onreadystatechange = function () {
-			if (this.readyState != 4) return;
+		fetch("/pokemon?shuffle=" + String(shuffle)).then((data) => {
+			prevID = currID;
+			parsePokemon(data);
+			updateGrayOut();
+		})
 
-			if (this.status == 200) {
-				var data = this.responseText;
-
-				// we get the returned data
-				prevID = currID;
-				parsePokemon(data);
-			}
-
-			// end of state change: it can be after some time (async)
-		};
-
-		xhr.open('GET', "/pokemon", true);
-		xhr.send();
 	}
 
+	function getPokemon(name) {
+		shuffle = document.getElementById("shChk").checked;
+		console.log("get sequential");
+
+		fetch("/pokemon/" + name + "?shuffle=" + String(shuffle)).then((data) => {
+			prevID = currID;
+			parsePokemon(data);
+			updateGrayOut();
+		})
+	}
 
 	function parsePokemon(pokemon) {
+		//DEBUG: remove below
+		currID = "ditto";
+		console.log(currID)
+		console.log(pokemon)
+	}
+
+	function updateGrayOut() {
 		if (prevID == null) {
 			document.getElementById("undo").classList.add("grayout");
 		} else {
 			document.getElementById("undo").classList.remove("grayout");
 		}
-		currID = 71;
-		console.log(pokemon)
 	}
 </script>
 

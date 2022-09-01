@@ -1,20 +1,28 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-
+from functools import partial
 
 hostName = "localhost"
 serverPort = 8080
 
 
-class pkServer(BaseHTTPRequestHandler):
+class pkHandler(BaseHTTPRequestHandler):
+  def __init__(self, db, *args, **kwargs):
+    self.db = db
+    super().__init__(*args, **kwargs)
+
   def do_GET(self):
     self.send_response(200)
     self.send_header("Content-type", "text/html")
     self.end_headers()
-    if self.path == '/':
+
+    if self.path is '/':
       fp = open("PokeRater-test.html", "r")
       self.wfile.write(bytes(fp.read(), "utf-8"))
     else:
       # TODO: get pokemon info
+      path, options = self.path.split('?')
+      path = path.split('/')
+      print(path)
       self.wfile.write(bytes("ditto", "utf-8"))
 
   def do_POST(self):
@@ -34,10 +42,10 @@ class pkServer(BaseHTTPRequestHandler):
     self.wfile.write(bytes(message, "utf8"))
 
 
-class pkServerManager:
+class pkServer:
   def __init__(self, db, host, port):
-    self.db = db
-    self.server = HTTPServer((host, port), pkServer)
+    self.handler = partial(pkHandler, db)
+    self.server = HTTPServer((host, port), self.handler)
 
   def run(self):
     try:
