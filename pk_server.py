@@ -12,6 +12,14 @@ class pkHandler(BaseHTTPRequestHandler):
     super().__init__(*args, **kwargs)
 
   def do_GET(self):
+    if "/resources" in self.path:
+      self.send_response(200)
+      self.send_header("Content-type", "image/png")
+      self.end_headers()
+      fp = open("."+self.path, "rb")
+      self.wfile.write(fp.read())
+      return
+
     self.send_response(200)
     self.send_header("Content-type", "text/html")
     self.end_headers()

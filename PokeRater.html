@@ -10,6 +10,36 @@
 	<!-- <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet" -->
 	<!-- type='text/css'> -->
 	<style>
+		.box {
+			font-size: 18px;
+			/* font-family: "Pokemon GB", Arial, sans-serif; */
+			border-radius: 2px;
+			padding: 16px;
+			width: 250px;
+			height: 48px;
+			line-height: 16px;
+			margin: auto;
+			background: white;
+			border: 1px solid white;
+			box-shadow: 0 1px 0 1px black,
+				inset 0 1px 0 1px black,
+				0 0 0 1px black,
+				inset 0 0 0 1px black;
+			text-align: left;
+		}
+
+
+		/* .box>i { */
+		#bouncing {
+			width: 0;
+			height: 0;
+			border: 5px solid transparent;
+			border-top-color: black;
+			margin-top: 23px;
+			float: right;
+		}
+
+
 		* {
 			box-sizing: border-box;
 		}
@@ -17,6 +47,11 @@
 		html,
 		body {
 			height: 100%;
+			background-image: url("https://img.wallpapersafari.com/desktop/728/410/35/10/YAyj8S.png");
+
+			background-repeat: no-repeat;
+			background-attachment: fixed;
+			background-size: cover;
 		}
 
 		body {
@@ -34,11 +69,22 @@
 
 		/* Style the header */
 		header {
-			background-color: #666;
-			padding: 0px 50px;
+			background-color: rgba(0, 0, 0, 0.125);
+			padding: 0px 0px;
 			text-align: center;
 			font-size: 35px;
 			color: white;
+			/* background-image: url("https://wallup.net/wp-content/uploads/2017/11/17/301412-Pokemon-748x421.jpg"); */
+		}
+
+		h2 {
+			margin: 30px 30px;
+		}
+
+		#pk_name_title {
+			font-size: 48px;
+			padding: 0px 50px;
+			margin: 0px;
 		}
 
 		/* Container for flexboxes */
@@ -54,16 +100,28 @@
 			width: 0;
 			z-index: 1;
 			overflow-x: hidden;
+			/* overflow-y: hidden; */
 			transition: 0.2s;
 			padding-top: 60px;
-			background: #ccc;
+			background: rgba(0, 0, 0, 0.25);
 
 		}
 
 		/* Style the list inside the menu */
-		nav ul {
+		ol {
 			list-style-type: none;
+			overflow-y: hidden;
 			padding: 0;
+		}
+
+		li {
+			padding-left: 30px;
+			padding-top: 10px;
+		}
+
+		li,
+		li>p {
+			white-space: nowrap;
 		}
 
 		/* Style the content */
@@ -72,12 +130,14 @@
 			-ms-flex: 3;
 			flex: 3; */
 			width: 100%;
-			background-color: #f1f1f1;
+
+			/* background-color: #f1f1f1; */
 			padding: 10px;
 		}
 
 		/* .image, */
-		img {
+		/* img { */
+		#sprites {
 			max-height: 300px;
 			height: 300px;
 			min-height: 300px;
@@ -127,12 +187,22 @@
 			/* MSIE */
 		}
 
+		#submit {
+			height: 100%;
+		}
+
+		#title-font {
+			height: 100%;
+		}
+
 
 		/* #half-stars-example { */
 
 		/* use display:inline-flex to prevent whitespace issues. alternatively, you can put all the children of .rating-group on a single line */
 		.rating-group {
 			display: inline-flex;
+			background-color: rgba(0, 0, 0, 0.25);
+			padding-right: 10px;
 		}
 
 		/* make hover effect work properly in IE */
@@ -222,7 +292,7 @@
 	<script>0</script>
 	<!--  -->
 	<header>
-		<h2 id="title">PokeRater</h2>
+		<h2 id="title"><img #id="title-font" src="/resources/PokeRater.png"></h2>
 	</header>
 	<pokemon>
 		<section>
@@ -258,14 +328,15 @@
 					</div><br>
 					<button class="pk-click" onclick="setSource(-1)"> <i class="fa-solid fa-arrow-left fa-3x"
 							aria-hidden="true"></i></button>
-					<button class="pk-click" onclick="setSource(1)"><i class="fa-solid fa-arrow-right fa-3x"
-							aria-hidden="true"></i></button><br>
-
 					<input class="shuffle" checked name="shuffle-check" id="shChk" value="checked" type="checkbox">
 					<label for="shChk"><i class="fa-solid fa-shuffle fa-2x"></i></label>
 
 					<button class="pk-click" id="undo" onclick="prevPokemon()"><i
-							class="fa-solid fa-angles-left fa-2x"></i></button><br><br>
+							class="fa-solid fa-angles-left fa-3x"></i></button>
+					<button class="pk-click" onclick="setSource(1)"><i class="fa-solid fa-arrow-right fa-3x"
+							aria-hidden="true"></i></button><br>
+
+					<!-- <br><br> -->
 
 					<!-- STARS -->
 					<div id="half-stars-example">
@@ -306,7 +377,7 @@
 						</div>
 					</div>
 					<br>
-					<button onclick="submit()">confirm</button>
+					<div class="box" onclick="submit()"><img id="submit" src="/resources/submit.png"><i id="bouncing"></i></div>
 
 					</div>
 				</center>
@@ -457,7 +528,7 @@
 		currID = pokemon.name;
 		imageLinks = pokemon.urls;
 		setSource(0);
-		document.getElementById("pk_name_title").innerHTML = pokemon.name;
+		document.getElementById("pk_name_title").innerHTML = pokemon.name.toUpperCase();
 		pokemon.gens.forEach(element => {
 			setGen(element[0], element[1], element[2])
 		});
@@ -479,7 +550,7 @@
 			document.getElementById("sidebar").style.width = "0";
 		} else {
 			sideNavButton.classList.add("fa-flip-horizontal");
-			document.getElementById("sidebar").style.width = "450px";
+			document.getElementById("sidebar").style.width = "300px";
 		}
 	}
 </script>
