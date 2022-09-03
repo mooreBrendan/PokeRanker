@@ -71,9 +71,14 @@
 			padding: 10px;
 		}
 
-		.image,
+		/* .image, */
 		img {
-			width: 50%;
+			max-height: 300px;
+			height: 300px;
+			min-height: 300px;
+			width: auto;
+			background-color: rgba(0, 0, 0, 0.5);
+			/* min-height: 50%; */
 		}
 
 		.pk-click {
@@ -222,28 +227,28 @@
 		<section>
 			<nav>
 				<ol>
-					<li #id="gen1">AVG: <p class="avg">xx</p>%, REM: <p class="rem">yyy</p>
+					<li #id="gen1">AVG: <p class="avg">xx</p>, REM: <p class="rem">yyy</p>
 					</li>
-					<li #id="gen2">AVG: <p class="avg">xx</p>%, REM: <p class="rem">yyy</p>
+					<li #id="gen2">AVG: <p class="avg">xx</p>, REM: <p class="rem">yyy</p>
 					</li>
-					<li #id="gen3">AVG: <p class="avg">xx</p>%, REM: <p class="rem">yyy</p>
+					<li #id="gen3">AVG: <p class="avg">xx</p>, REM: <p class="rem">yyy</p>
 					</li>
-					<li #id="gen4">AVG: <p class="avg">xx</p>%, REM: <p class="rem">yyy</p>
+					<li #id="gen4">AVG: <p class="avg">xx</p>, REM: <p class="rem">yyy</p>
 					</li>
-					<li #id="gen5">AVG: <p class="avg">xx</p>%, REM: <p class="rem">yyy</p>
+					<li #id="gen5">AVG: <p class="avg">xx</p>, REM: <p class="rem">yyy</p>
 					</li>
-					<li #id="gen6">AVG: <p class="avg">xx</p>%, REM: <p class="rem">yyy</p>
+					<li #id="gen6">AVG: <p class="avg">xx</p>, REM: <p class="rem">yyy</p>
 					</li>
-					<li #id="gen7">AVG: <p class="avg">xx</p>%, REM: <p class="rem">yyy</p>
+					<li #id="gen7">AVG: <p class="avg">xx</p>, REM: <p class="rem">yyy</p>
 					</li>
-					<li #id="gen8">AVG: <p class="avg">xx</p>%, REM: <p class="rem">yyy</p>
+					<li #id="gen8">AVG: <p class="avg">xx</p>, REM: <p class="rem">yyy</p>
 					</li>
 				</ol>
 			</nav>
 
 			<article>
 				<center>
-					<h1>Ditto</h1>
+					<h1 id="pk_name_title">Ditto</h1>
 					<div class="image">
 						<img id="sprites" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png">
 					</div><br>
@@ -307,18 +312,28 @@
 
 </body>
 <script>
-	//DEBUG: make 0 when done
 	currID = null;
 	prevID = null;
 	currIMG = 0;
-	//DEBUG: make empty when done
-	imageLinks = ["https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png", "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png", "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/134.png"]
+	imageLinks = []
 
 	function setup() {
 		document.getElementById("shChk").checked = false;
-		document.getElementById("rating2-0").checked = true
+		document.getElementById("rating2-0").checked = true;
 		updateGrayOut();
-		getPokemon(0);
+		getFirst();
+		document.onkeydown = function (event) {
+			switch (event.keyCode) {
+				case 37: //left
+					// console.log("Left key is pressed.");
+					setSource(-1);
+					break;
+				case 39: //right
+					// console.log("Right key is pressed.");
+					setSource(1)
+					break;
+			}
+		};
 	}
 
 	//actual mod since js only uses remainder
@@ -340,7 +355,8 @@
 
 	//sets the information for the generation on the page
 	function setGen(gen, avg, rem) {
-		document.getElementsByClassName("avg")[Number(gen) - 1].innerHTML = String(avg);
+		cleaned_average = (Math.round(avg * 100) / 100).toFixed(2);
+		document.getElementsByClassName("avg")[Number(gen) - 1].innerHTML = String(cleaned_average);
 		document.getElementsByClassName("rem")[Number(gen) - 1].innerHTML = String(rem);
 	}
 
@@ -352,7 +368,10 @@
 		}
 
 		//get prevID
-		fetch("/pokemon/" + prevID + "?shuffle=" + String(shuffle)).then((data) => {
+		fetch("/" + prevID).then((post) => {
+			console.log(post);
+			return post.json()
+		}).then((data) => {
 			currID = prevID;
 			prevID = null;
 			parsePokemon(data);
@@ -398,7 +417,15 @@
 		shuffle = document.getElementById("shChk").checked;
 		console.log("get random");
 
-		fetch("/pokemon?shuffle=" + String(shuffle)).then((data) => {
+		if (shuffle) {
+			url = "/rand"
+		} else {
+			url = "/seq?" + currID
+		}
+		fetch(url).then((post) => {
+			console.log(post)
+			return post.json()
+		}).then((data) => {
 			prevID = currID;
 			parsePokemon(data);
 			updateGrayOut();
@@ -406,11 +433,14 @@
 
 	}
 
-	function getPokemon(name) {
+	function getFirst(name) {
 		shuffle = document.getElementById("shChk").checked;
 		console.log("get sequential");
 
-		fetch("/pokemon/" + name + "?shuffle=" + String(shuffle)).then((data) => {
+		fetch("/first").then((post) => {
+			console.log(post)
+			return post.json()
+		}).then((data) => {
 			prevID = currID;
 			parsePokemon(data);
 			updateGrayOut();
@@ -419,9 +449,17 @@
 
 	function parsePokemon(pokemon) {
 		//DEBUG: remove below
-		currID = "ditto";
-		console.log(currID)
+		// console.log(currID)
 		console.log(pokemon)
+		document.getElementById("rating2-0").checked = true;
+		currID = pokemon.name;
+		imageLinks = pokemon.urls;
+		setSource(0);
+		document.getElementById("pk_name_title").innerHTML = pokemon.name;
+		pokemon.gens.forEach(element => {
+			setGen(element[0], element[1], element[2])
+		});
+
 	}
 
 	function updateGrayOut() {

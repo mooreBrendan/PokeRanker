@@ -56,6 +56,10 @@ class DB:
         f"select rating from ratings where gen={gen} and rating != 0")
     return res.fetchall()
 
+  def get_generations(self):
+    res = self.cur.execute("Select Distinct gen from ratings")
+    return [i[0] for i in res.fetchall()]
+
   def get_unrated_ids(self):
     """gets the the pokemon ids with no rating
     Returns: list: the ids that are not 0
@@ -79,7 +83,7 @@ class DB:
     """
     res = self.cur.execute(
         f"select name, sprites from ratings where num = {num}")
-    return res.fetchall()
+    return res.fetchall()[0]
 
   def get_pokemon_by_name(self, name):
     """returns information on the selected pokemon
@@ -88,7 +92,11 @@ class DB:
     """
     res = self.cur.execute(
         f"select name, sprites from ratings where name = '{name}'")
-    return res.fetchall()
+    return res.fetchall()[0]
+
+  def get_id_by_name(self, name):
+    res = self.cur.execute(f"select num from ratings where name = '{name}'")
+    return res.fetchall()[0][0]
 
   def set_rating(self, pokemon, rating):
     """sets the rating for the given pokemon
@@ -103,6 +111,8 @@ class DB:
 
   def get_average(self, gen):
     arr = self.get_ratings(gen)
+    if len(arr) < 1:
+      return 0
     sum_val = 0
     for i in arr:
       sum_val += i[0]

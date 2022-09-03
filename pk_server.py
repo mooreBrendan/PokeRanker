@@ -1,5 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from functools import partial
+import json
 
 hostName = "localhost"
 serverPort = 8080
@@ -15,15 +16,46 @@ class pkHandler(BaseHTTPRequestHandler):
     self.send_header("Content-type", "text/html")
     self.end_headers()
 
-    if self.path is '/':
+    print(self.path)
+    if self.path == '/':
       fp = open("PokeRater-test.html", "r")
       self.wfile.write(bytes(fp.read(), "utf-8"))
-    else:
-      # TODO: get pokemon info
+      return
+    elif self.path == "/first":
+      print("first")
+      next_id = self.db.get_next_sequential(0)
+      pk_info = self.db.get_pokemon_by_id(next_id)
+    elif self.path == "/rand":
+      print("rand")
+      next_id = self.db.get_next_rand()
+      pk_info = self.db.get_pokemon_by_id(next_id)
+    elif '?' in self.path:  # sequential
       path, options = self.path.split('?')
-      path = path.split('/')
-      print(path)
-      self.wfile.write(bytes("ditto", "utf-8"))
+      print(f"{path=}")
+      print(options)
+      pk_id = self.db.get_id_by_name(options)
+      next_id = self.db.get_next_sequential(pk_id)
+      pk_info = self.db.get_pokemon_by_id(next_id)
+    else:
+      print("else")
+      pk_info = self.db.get_pokemon_by_name(self.path[1:])
+    # print(pk_info)
+    # urls = ','.join(pk_info[1])
+    # pk_info = str(pk_info[0]) + '[' + urls + ']'
+    generations = self.db.get_generations()
+    gens = "["
+    for gen in generations:
+      avg = self.db.get_average(gen)
+      rem = len(self.db.get_unrated_gen_ids(gen))
+      gens += "["+str(gen)+','+str(avg)+","+str(rem)+"]"
+      if gen != generations[-1]:
+        gens += ","
+    gens += "]"
+    print(gens)
+    pk_data = '{"name":"'+pk_info[0]+'","urls":'+pk_info[1]+',"gens":'+gens+'}'
+    print(pk_data)
+
+    self.wfile.write(bytes(pk_data, "utf-8"))
 
   def do_POST(self):
     self.send_response(200)
@@ -33,12 +65,14 @@ class pkHandler(BaseHTTPRequestHandler):
     # <--- Gets the size of data
     content_length = int(self.headers['Content-Length'])
     post_data = self.rfile.read(content_length)  # <--- Gets the data itself
+    post_data = json.loads(post_data.decode("utf-8"))
+    self.db.set_rating(post_data["name"], float(post_data["rating"]))
     print(post_data)
 
     #format: b'{"shuffle":false,"rating":"4.5"}'
 
     # DEBUG: info
-    message = "Hello, World! Here is a POST response"
+    message = "submitted"
     self.wfile.write(bytes(message, "utf8"))
 
 

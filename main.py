@@ -19,7 +19,8 @@ if __name__ == "__main__":
   #     if not pokedb.already_exists(name):
   #       print("adding")
   #       poke_num, sprites = pk.get_sprites(name, poke['url'])
-  #       pokedb.add_entry(poke_num, name, gen_num+1, ' '.join(sprites))
+  #       pokedb.add_entry(poke_num, name, gen_num+1,
+  #                        '["' + '","'.join(sprites)+'"]')
 
   print("done initializing")
   server = pkServer(pokedb, "localhost", 8080)
