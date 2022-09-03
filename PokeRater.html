@@ -50,15 +50,13 @@
 
 		/* Style the navigation menu */
 		nav {
-			-webkit-flex: 1;
-			-ms-flex: 1;
-			flex: 1;
-			background: #ccc;
-			padding: 20px;
-			/* 
+			height: 100%;
 			width: 0;
+			z-index: 1;
 			overflow-x: hidden;
-			transition: 0.2s; */
+			transition: 0.2s;
+			padding-top: 60px;
+			background: #ccc;
 
 		}
 
@@ -70,9 +68,10 @@
 
 		/* Style the content */
 		article {
-			-webkit-flex: 3;
+			/* -webkit-flex: 3;
 			-ms-flex: 3;
-			flex: 3;
+			flex: 3; */
+			width: 100%;
 			background-color: #f1f1f1;
 			padding: 10px;
 		}
@@ -127,10 +126,6 @@
 			filter: alpha(opacity=60);
 			/* MSIE */
 		}
-
-		/* .grayout:hover {
-			color: black;
-		} */
 
 
 		/* #half-stars-example { */
@@ -231,7 +226,7 @@
 	</header>
 	<pokemon>
 		<section>
-			<nav>
+			<nav id="sidebar">
 				<ol>
 					<li #id="gen1">AVG: <p class="avg">xx</p>, REM: <p class="rem">yyy</p>
 					</li>
@@ -252,8 +247,8 @@
 				</ol>
 			</nav>
 
-			<article>
-				<button class="open_side" onclick="sideNav()">
+			<article id="main">
+				<button class="open_side pk-click" onclick="sideNav()">
 					<i id="side_nav_button" class="fa-solid fa-arrow-right-to-bracket fa-2x"></i>
 				</button>
 				<center>
@@ -334,11 +329,9 @@
 		document.onkeydown = function (event) {
 			switch (event.keyCode) {
 				case 37: //left
-					// console.log("Left key is pressed.");
 					setSource(-1);
 					break;
 				case 39: //right
-					// console.log("Right key is pressed.");
 					setSource(1)
 					break;
 			}
@@ -483,8 +476,10 @@
 		sideNavButton = document.getElementById("side_nav_button");
 		if (sideNavButton.classList.contains("fa-flip-horizontal")) {
 			sideNavButton.classList.remove("fa-flip-horizontal");
+			document.getElementById("sidebar").style.width = "0";
 		} else {
 			sideNavButton.classList.add("fa-flip-horizontal");
+			document.getElementById("sidebar").style.width = "450px";
 		}
 	}
 </script>
