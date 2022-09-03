@@ -44,7 +44,7 @@ class DB:
         sprites (text): comma seperated list of urls
     """
     self.cur.execute(
-        f"insert into ratings(num,name,gen,sprites) values ({num},'{name}',{gen},'{sprites}')")
+        "insert into ratings(num,name,gen,sprites) values (?,?,?,?)", (num, name, gen, sprites,))
     self.conn.commit()
 
   def get_ratings(self, gen):
@@ -53,10 +53,13 @@ class DB:
     Returns: list: list of ratings
     """
     res = self.cur.execute(
-        f"select rating from ratings where gen={gen} and rating != 0")
+        "select rating from ratings where gen=? and rating != 0", (gen,))
     return res.fetchall()
 
   def get_generations(self):
+    """gets all of the generations in the database
+    Returns: array: array of ints
+    """
     res = self.cur.execute("Select Distinct gen from ratings")
     return [i[0] for i in res.fetchall()]
 
@@ -73,7 +76,7 @@ class DB:
     Returns: list: the ids that are not 0
     """
     res = self.cur.execute(
-        f"select num from ratings where rating = 0 and gen={gen}")
+        "select num from ratings where rating = 0 and gen=?", (gen,))
     return res.fetchall()
 
   def get_pokemon_by_id(self, num):
@@ -82,7 +85,7 @@ class DB:
     Returns: list: the name and sprites for given pokemon
     """
     res = self.cur.execute(
-        f"select name, sprites from ratings where num = {num}")
+        "select name, sprites from ratings where num = ?", (num,))
     return res.fetchall()[0]
 
   def get_pokemon_by_name(self, name):
@@ -91,11 +94,15 @@ class DB:
     Returns: list: the name and sprites for given pokemon
     """
     res = self.cur.execute(
-        f"select name, sprites from ratings where name = '{name}'")
+        "select name, sprites from ratings where name = ?", (name,))
     return res.fetchall()[0]
 
   def get_id_by_name(self, name):
-    res = self.cur.execute(f"select num from ratings where name = '{name}'")
+    """gets the pokemon id from name
+    Args: name (string): name of the pokemon
+    Returns: int: pokemon id number
+    """
+    res = self.cur.execute("select num from ratings where name = ?", (name,))
     return res.fetchall()[0][0]
 
   def set_rating(self, pokemon, rating):
@@ -106,25 +113,38 @@ class DB:
         rating (number): the rating
     """
     self.cur.execute(
-        f"update ratings set rating = {rating} where name='{pokemon}'")
+        "update ratings set rating = ? where name=?", (rating, pokemon,))
     self.conn.commit()
 
   def get_average(self, gen):
+    """gets the average for the generation
+    Args: gen (int): generation number
+    Returns: float: the average for the generation
+    """
     arr = self.get_ratings(gen)
-    if len(arr) < 1:
+    if len(arr) < 1:  # check if can even get average
       return 0
+
+    # calculate average
     sum_val = 0
     for i in arr:
       sum_val += i[0]
     return sum_val/len(arr)
 
   def get_next_rand(self):
+    """gets the next pokemon randomly
+    Returns: array: array of pokemon name and urls
+    """
     arr = self.get_unrated_ids()
     return arr[randint(0, len(arr))][0]
 
   def get_next_sequential(self, curr):
+    """gets the next pokemon sequentially
+    Args: curr (id): the pokemon number
+    Returns: array: array of pokemon name and urls
+    """
     arr = [i[0] for i in self.get_unrated_ids()]
-    out = max(arr)
+    out = max(arr)  # find the highest element to get end
 
     # check if need to loop
     if out == curr:

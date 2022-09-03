@@ -1,10 +1,12 @@
 """main function that calls the others"""
 import poke_api as pk
 import db
-from pk_server import pkServer
+from pk_server import PKServer
 
 if __name__ == "__main__":
   print("starting initializing")
+  HOST_NAME = "localhost"
+  SERVER_PORT = 8080
 
   print("creating db")
   pokedb = db.DB()
@@ -23,5 +25,5 @@ if __name__ == "__main__":
                          '["' + '","'.join(sprites)+'"]')
 
   print("done initializing")
-  server = pkServer(pokedb, "localhost", 8080)
+  server = PKServer(pokedb, HOST_NAME, SERVER_PORT)
   server.run()
