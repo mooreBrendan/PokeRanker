@@ -18,7 +18,7 @@ class pkHandler(BaseHTTPRequestHandler):
 
     print(self.path)
     if self.path == '/':
-      fp = open("PokeRater-test.html", "r")
+      fp = open("PokeRater.html", "r")
       self.wfile.write(bytes(fp.read(), "utf-8"))
       return
     elif self.path == "/first":

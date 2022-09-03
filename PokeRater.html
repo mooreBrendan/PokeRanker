@@ -26,6 +26,7 @@
 			margin: 0px;
 		}
 
+
 		pokemon {
 			flex: 1;
 			height: 100%;
@@ -34,7 +35,7 @@
 		/* Style the header */
 		header {
 			background-color: #666;
-			padding: 0px 30px;
+			padding: 0px 50px;
 			text-align: center;
 			font-size: 35px;
 			color: white;
@@ -54,6 +55,11 @@
 			flex: 1;
 			background: #ccc;
 			padding: 20px;
+			/* 
+			width: 0;
+			overflow-x: hidden;
+			transition: 0.2s; */
+
 		}
 
 		/* Style the list inside the menu */
@@ -221,7 +227,7 @@
 	<script>0</script>
 	<!--  -->
 	<header>
-		<h2>PokeRater</h2>
+		<h2 id="title">PokeRater</h2>
 	</header>
 	<pokemon>
 		<section>
@@ -247,6 +253,9 @@
 			</nav>
 
 			<article>
+				<button class="open_side" onclick="sideNav()">
+					<i id="side_nav_button" class="fa-solid fa-arrow-right-to-bracket fa-2x"></i>
+				</button>
 				<center>
 					<h1 id="pk_name_title">Ditto</h1>
 					<div class="image">
@@ -467,6 +476,15 @@
 			document.getElementById("undo").classList.add("grayout");
 		} else {
 			document.getElementById("undo").classList.remove("grayout");
+		}
+	}
+
+	function sideNav() {
+		sideNavButton = document.getElementById("side_nav_button");
+		if (sideNavButton.classList.contains("fa-flip-horizontal")) {
+			sideNavButton.classList.remove("fa-flip-horizontal");
+		} else {
+			sideNavButton.classList.add("fa-flip-horizontal");
 		}
 	}
 </script>
